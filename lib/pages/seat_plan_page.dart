@@ -1,5 +1,7 @@
+import 'package:bus_reservation_udemy/customwidgets/seat_plan_view.dart';
 import 'package:bus_reservation_udemy/models/bus_schedule.dart';
 import 'package:bus_reservation_udemy/utils/colors.dart';
+import 'package:bus_reservation_udemy/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class SeatPlanPage extends StatefulWidget {
@@ -89,6 +91,17 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
                 style: const TextStyle(fontSize: 16),
               ),
             ),
+            Expanded(
+                child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SeatPLanView(
+                onSeatSelected: (value, seat) {},
+                totalSeatBooked: totalSeatBooked,
+                bookedSeatNumbers: bookSeatNumbers,
+                totalSeat: schedule.bus.totalSeat,
+                isBusinessClass: schedule.bus.busType == busTypeACBusiness,
+              ),
+            )),
             OutlinedButton(
               onPressed: () {},
               child: const Text('NEXT'),
