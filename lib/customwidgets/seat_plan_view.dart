@@ -45,14 +45,14 @@ class SeatPLanView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'FRONT',
             style: TextStyle(
               fontSize: 30,
               color: Colors.grey,
             ),
           ),
-          Divider(
+          const Divider(
             height: 2,
             color: Colors.black,
           ),
@@ -113,7 +113,14 @@ class _SeatState extends State<Seat> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: widget.isBooked
+          ? null
+          : () {
+              setState(() {
+                selected = !selected;
+              });
+              widget.onSelect(selected);
+            },
       child: Container(
         margin: const EdgeInsets.all(8),
         width: 50,

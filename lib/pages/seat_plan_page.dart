@@ -1,8 +1,11 @@
 import 'package:bus_reservation_udemy/customwidgets/seat_plan_view.dart';
 import 'package:bus_reservation_udemy/models/bus_schedule.dart';
+import 'package:bus_reservation_udemy/providers/app_data_provider.dart';
 import 'package:bus_reservation_udemy/utils/colors.dart';
 import 'package:bus_reservation_udemy/utils/constants.dart';
+import 'package:bus_reservation_udemy/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SeatPlanPage extends StatefulWidget {
   const SeatPlanPage({super.key});
@@ -26,7 +29,20 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
     final argList = ModalRoute.of(context)!.settings.arguments as List;
     schedule = argList[0];
     departureDate = argList[1];
+    _getData();
     super.didChangeDependencies();
+  }
+
+  _getData() async {
+    final resList = await Provider.of<AppDataProvider>(context, listen: false)
+        .getReservationsByScheduleAndDepartureDate(
+            schedule.scheduleId!, departureDate);
+    List<String> seats = [];
+    for (final res in resList) {
+      totalSeatBooked += res.totalSeatBooked;
+      seats.add((res.seatNumbers));
+    }
+    bookSeatNumbers = seats.join('.');
   }
 
   @override
@@ -92,18 +108,40 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
               ),
             ),
             Expanded(
-                child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SeatPLanView(
-                onSeatSelected: (value, seat) {},
-                totalSeatBooked: totalSeatBooked,
-                bookedSeatNumbers: bookSeatNumbers,
-                totalSeat: schedule.bus.totalSeat,
-                isBusinessClass: schedule.bus.busType == busTypeACBusiness,
+              child: SingleChildScrollView(
+                child: SeatPLanView(
+                  onSeatSelected: (value, seat) {
+                    if (value) {
+                      selectedSeats.add(seat);
+                    } else {
+                      selectedSeats.remove(seat);
+                    }
+                    selectedSeatStringNotifier.value = selectedSeats.join(',');
+                  },
+                  totalSeatBooked: totalSeatBooked,
+                  bookedSeatNumbers: bookSeatNumbers,
+                  totalSeat: schedule.bus.totalSeat,
+                  isBusinessClass: schedule.bus.busType == busTypeACBusiness,
+                ),
               ),
-            )),
+            ),
             OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                if (selectedSeats.isEmpty) {
+                  showMsg(context, 'Please Select Your Seat First');
+                  return;
+                }
+                Navigator.pushNamed(
+                  context,
+                  routeNameBookingConfirmationPage,
+                  arguments: [
+                    departureDate,
+                    schedule,
+                    selectedSeatStringNotifier.value,
+                    selectedSeats.length
+                  ],
+                );
+              },
               child: const Text('NEXT'),
             )
           ],

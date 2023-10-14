@@ -5,6 +5,7 @@ import 'package:bus_reservation_udemy/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'pages/booking_confirmation_page.dart';
 import 'pages/search_page.dart';
 
 void main() {
@@ -32,7 +33,9 @@ class MyApp extends StatelessWidget {
       routes: {
         routeNameHome: (context) => const SearchPage(),
         routeNameSearchResultPage: (context) => const SearchResultPage(),
-        routeNameSeatPlanPage: (context) => const SeatPlanPage()
+        routeNameSeatPlanPage: (context) => const SeatPlanPage(),
+        routeNameBookingConfirmationPage: (context) =>
+            const BookingConfirmationPage()
       },
     );
   }
